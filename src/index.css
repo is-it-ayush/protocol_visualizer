@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@theme {
+  --color-ivory: #faf5e9;
+  --color-ivory-deep: #f1e8d2;
+  --color-ink: #1f1a17;
+  --color-ink-soft: #5a4f47;
+  --color-saffron: #e8891d;
+  --color-saffron-tint: #fbe4c4;
+  --color-peacock: #0f6b7a;
+  --color-peacock-tint: #cfe6e9;
+  --color-vermilion: #c8341f;
+  --color-vermilion-tint: #f6d3cc;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
