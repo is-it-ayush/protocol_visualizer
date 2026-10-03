@@ -9,8 +9,11 @@ import { Waveform } from './Waveform'
 import type { Viewport } from './Waveform'
 import { Minimap } from './Minimap'
 import { NodeDiagram } from './NodeDiagram'
+import { PacketAnatomy } from './PacketAnatomy'
 
 const BITS_PER_SECOND_AT_1X = 4
+
+const PANEL = 'flex flex-col gap-3 rounded-lg border border-ivory-deep bg-white p-3'
 
 function parsePayload(text: string, ascii: boolean): number[] | null {
   if (ascii) return asciiToBytes(text)
@@ -27,6 +30,7 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
   const [error, setError] = useState<string | null>(null)
   const [faults, setFaults] = useState<string[]>([])
   const [selected, setSelected] = useState<FieldSpan | null>(null)
+  const [anatomyName, setAnatomyName] = useState<string | null>(null)
   const [viewport, setViewport] = useState<Viewport | undefined>()
 
   const timeline = useMemo(
@@ -73,27 +77,71 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
   const toggleFault = (id: string) =>
     setFaults((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]))
 
+  const onAnatomySelect = (name: string) => {
+    setAnatomyName(name)
+    const span = timeline.fieldSpans.find((s) => s.name === name)
+    if (!span) return
+    setSelected(span)
+    dispatch({ type: 'seek', t: span.start })
+  }
+
   const atPlayhead =
     timeline.fieldSpans.find((s) => pb.t >= s.start && pb.t < s.end) ?? null
   const shown = selected ?? atPlayhead
 
   return (
     <div className="flex min-w-0 flex-col gap-6">
-      <section className="order-2 flex flex-col gap-4 md:order-none lg:flex-row">
-        <div className="flex flex-1 flex-col gap-4">
+      <section className="flex min-w-0 flex-col gap-2">
+        <PacketAnatomy
+          protocolId={protocol.id}
+          selected={anatomyName ?? shown?.name ?? null}
+          onSelect={onAnatomySelect}
+        />
+      </section>
+      <section className="flex min-w-0 flex-col gap-2">
+        <Waveform timeline={timeline} playhead={pb.t} onViewport={setViewport} />
+        <Minimap
+          timeline={timeline}
+          playhead={pb.t}
+          viewport={viewport}
+          onSeek={(t) => dispatch({ type: 'seek', t })}
+        />
+        <div className="flex flex-wrap gap-1">
+          {timeline.fieldSpans.map((s, i) => (
+            <button
+              key={i}
+              type="button"
+              className="min-h-11 rounded border border-ivory-deep px-3 py-0.5 text-xs hover:bg-saffron-tint"
+              onMouseEnter={() => setSelected(s)}
+              onMouseLeave={() => setSelected(null)}
+              onClick={() => {
+                setSelected(s)
+                setAnatomyName(s.name)
+                dispatch({ type: 'seek', t: s.start })
+              }}
+            >
+              {s.name}
+            </button>
+          ))}
+        </div>
+      </section>
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className={PANEL}>
           <ConfigPanel
             fields={protocol.configFields}
             config={config}
             onChange={(key, value) => setConfig((prev) => ({ ...prev, [key]: value }))}
           />
+        </div>
+        <div className={PANEL}>
           <div className="flex flex-col gap-1">
-            <label htmlFor="payload" className="text-sm font-medium text-gray-700">
+            <label htmlFor="payload" className="text-sm font-medium text-ink-soft">
               Payload
             </label>
             <input
               id="payload"
               type="text"
-              className="rounded-md border p-2 font-mono"
+              className="rounded-md border border-ivory-deep p-2 font-mono"
               value={text}
               onChange={(e) => onPayload(e.target.value)}
             />
@@ -103,11 +151,11 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
                 <span>ASCII input</span>
               </label>
             )}
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-vermilion">{error}</p>}
           </div>
           {protocol.faults.length > 0 && (
             <fieldset className="flex flex-col gap-1">
-              <legend className="text-sm font-medium text-gray-700">Faults</legend>
+              <legend className="text-sm font-medium text-ink-soft">Faults</legend>
               {protocol.faults.map((fault) => (
                 <label key={fault.id} className="flex items-center gap-2 text-sm">
                   <input
@@ -121,39 +169,13 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
             </fieldset>
           )}
         </div>
-        <div className="flex flex-1 flex-col gap-4">
+        <div className={`${PANEL} md:col-span-2 xl:col-span-1`}>
           <NodeDiagram from={shown?.from ?? 'A'} nodes={['Node A', 'Node B']} />
           <PlaybackControls state={pb} dispatch={dispatch} />
         </div>
       </section>
-      <section className="order-1 flex min-w-0 flex-col gap-2 md:order-none">
-        <Waveform timeline={timeline} playhead={pb.t} onViewport={setViewport} />
-        <Minimap
-          timeline={timeline}
-          playhead={pb.t}
-          viewport={viewport}
-          onSeek={(t) => dispatch({ type: 'seek', t })}
-        />
-        <div className="flex flex-wrap gap-1">
-          {timeline.fieldSpans.map((s, i) => (
-            <button
-              key={i}
-              type="button"
-              className="min-h-11 rounded border px-3 py-0.5 text-xs hover:bg-gray-100"
-              onMouseEnter={() => setSelected(s)}
-              onMouseLeave={() => setSelected(null)}
-              onClick={() => {
-                setSelected(s)
-                dispatch({ type: 'seek', t: s.start })
-              }}
-            >
-              {s.name}
-            </button>
-          ))}
-        </div>
-      </section>
-      <section className="order-3 md:order-none">
-        <h2 className="mb-2 text-lg font-medium">Field inspector</h2>
+      <section>
+        <h2 className="mb-2 text-lg font-medium text-ink">Field inspector</h2>
         <FieldInspector span={shown} events={timeline.events} />
       </section>
     </div>
