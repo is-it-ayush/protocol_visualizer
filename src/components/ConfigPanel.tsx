@@ -13,13 +13,13 @@ export function ConfigPanel({ fields, config, onChange }: Props) {
         const id = `cfg-${field.key}`
         return (
           <div key={field.key} className="flex flex-col gap-1">
-            <label htmlFor={id} className="text-sm font-medium text-gray-700">
+            <label htmlFor={id} className="text-sm font-medium text-ink-soft">
               {field.label}
             </label>
             {field.type === 'select' ? (
               <select
                 id={id}
-                className="rounded-md border p-1"
+                className="min-h-11 rounded-md border border-ivory-deep bg-white p-2 text-ink focus:ring-2 focus:ring-peacock"
                 value={String(config[field.key])}
                 onChange={(e) => {
                   const opt = field.options?.find((o) => String(o.value) === e.target.value)
@@ -36,7 +36,7 @@ export function ConfigPanel({ fields, config, onChange }: Props) {
               <input
                 id={id}
                 type="number"
-                className="rounded-md border p-1"
+                className="min-h-11 rounded-md border border-ivory-deep bg-white p-2 text-ink focus:ring-2 focus:ring-peacock"
                 value={String(config[field.key])}
                 onChange={(e) => {
                   const raw = e.target.value

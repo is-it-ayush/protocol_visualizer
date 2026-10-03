@@ -14,6 +14,7 @@ import { PacketAnatomy } from './PacketAnatomy'
 const BITS_PER_SECOND_AT_1X = 4
 
 const PANEL = 'flex flex-col gap-3 rounded-lg border border-ivory-deep bg-white p-3'
+const PANEL_TITLE = 'text-sm font-semibold uppercase tracking-wide text-peacock'
 
 function parsePayload(text: string, ascii: boolean): number[] | null {
   if (ascii) return asciiToBytes(text)
@@ -132,6 +133,7 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
       </section>
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         <div className={PANEL}>
+          <h3 className={PANEL_TITLE}>Configuration</h3>
           <ConfigPanel
             fields={protocol.configFields}
             config={config}
@@ -139,6 +141,7 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
           />
         </div>
         <div className={PANEL}>
+          <h3 className={PANEL_TITLE}>Payload &amp; faults</h3>
           <div className="flex flex-col gap-1">
             <label htmlFor="payload" className="text-sm font-medium text-ink-soft">
               Payload
@@ -146,12 +149,12 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
             <input
               id="payload"
               type="text"
-              className="rounded-md border border-ivory-deep p-2 font-mono"
+              className="min-h-11 rounded-md border border-ivory-deep bg-white p-2 font-mono text-ink focus:ring-2 focus:ring-peacock"
               value={text}
               onChange={(e) => onPayload(e.target.value)}
             />
             {protocol.asciiInput && (
-              <label className="flex items-center gap-2 text-sm">
+              <label className="flex min-h-11 items-center gap-2 text-sm">
                 <input type="checkbox" checked={ascii} onChange={(e) => toggleAscii(e.target.checked)} />
                 <span>ASCII input</span>
               </label>
@@ -162,7 +165,7 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
             <fieldset className="flex flex-col gap-1">
               <legend className="text-sm font-medium text-ink-soft">Faults</legend>
               {protocol.faults.map((fault) => (
-                <label key={fault.id} className="flex items-center gap-2 text-sm">
+                <label key={fault.id} className="flex min-h-11 items-center gap-2 text-sm">
                   <input
                     type="checkbox"
                     checked={faults.includes(fault.id)}
@@ -175,6 +178,7 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
           )}
         </div>
         <div className={`${PANEL} md:col-span-2 xl:col-span-1`}>
+          <h3 className={PANEL_TITLE}>Playback</h3>
           <NodeDiagram from={shown?.from ?? 'A'} nodes={['Node A', 'Node B']} />
           <PlaybackControls state={pb} dispatch={dispatch} />
         </div>
