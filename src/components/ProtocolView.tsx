@@ -76,8 +76,8 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
   const shown = selected ?? atPlayhead
 
   return (
-    <div className="flex flex-col gap-6">
-      <section className="flex flex-col gap-4 lg:flex-row">
+    <div className="flex min-w-0 flex-col gap-6">
+      <section className="order-2 flex flex-col gap-4 md:order-none lg:flex-row">
         <div className="flex flex-1 flex-col gap-4">
           <ConfigPanel
             fields={protocol.configFields}
@@ -124,8 +124,8 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
           <PlaybackControls state={pb} dispatch={dispatch} />
         </div>
       </section>
-      <section className="flex flex-col gap-2">
-        <div className="overflow-x-auto">
+      <section className="order-1 flex min-w-0 flex-col gap-2 md:order-none">
+        <div className="max-w-full overflow-x-auto">
           <Waveform timeline={timeline} playhead={pb.t} />
         </div>
         <Minimap onSeek={(t) => dispatch({ type: 'seek', t })} />
@@ -134,7 +134,7 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
             <button
               key={i}
               type="button"
-              className="rounded border px-2 py-0.5 text-xs hover:bg-gray-100"
+              className="min-h-11 rounded border px-3 py-0.5 text-xs hover:bg-gray-100"
               onMouseEnter={() => setSelected(s)}
               onMouseLeave={() => setSelected(null)}
               onClick={() => {
@@ -147,7 +147,7 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
           ))}
         </div>
       </section>
-      <section>
+      <section className="order-3 md:order-none">
         <h2 className="mb-2 text-lg font-medium">Field inspector</h2>
         <FieldInspector span={shown} events={timeline.events} />
       </section>
