@@ -27,7 +27,7 @@ export function Minimap({ timeline, playhead, onSeek, viewport }: Props) {
       data-testid="minimap"
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       preserveAspectRatio="none"
-      className="h-6 w-full cursor-pointer rounded border bg-gray-50"
+      className="h-6 w-full cursor-pointer rounded border bg-ivory-deep"
       onClick={click}
     >
       {timeline.fieldSpans.map((f, i) => (
@@ -37,7 +37,7 @@ export function Minimap({ timeline, playhead, onSeek, viewport }: Props) {
           y={4}
           width={Math.max(1, sx(f.end) - sx(f.start))}
           height={HEIGHT - 8}
-          fill={f.from === 'A' ? '#3b82f6' : '#10b981'}
+          className={f.from === 'A' ? 'fill-peacock' : 'fill-saffron'}
           fillOpacity={0.5}
         />
       ))}
@@ -49,11 +49,18 @@ export function Minimap({ timeline, playhead, onSeek, viewport }: Props) {
           width={Math.max(2, sx(viewport.end) - sx(viewport.start))}
           height={HEIGHT - 2}
           fill="none"
-          stroke="#374151"
+          className="stroke-ink"
           strokeWidth={1.5}
         />
       )}
-      <line x1={sx(playhead)} x2={sx(playhead)} y1={0} y2={HEIGHT} stroke="#f59e0b" strokeWidth={2} />
+      <line
+        x1={sx(playhead)}
+        x2={sx(playhead)}
+        y1={0}
+        y2={HEIGHT}
+        className="stroke-vermilion"
+        strokeWidth={2}
+      />
     </svg>
   )
 }

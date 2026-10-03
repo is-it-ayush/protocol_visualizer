@@ -30,12 +30,12 @@ export function FieldInspector({ span, events, protocolId }: Props) {
             )}
           </dl>
         ) : (
-          <p className="text-sm text-gray-500">Hover or tap a field to inspect it.</p>
+          <p className="text-sm text-ink-soft">Hover or tap a field to inspect it.</p>
         )}
       </div>
       <ul className="max-h-48 overflow-y-auto text-sm">
         {events.map((ev, i) => (
-          <li key={i} className={ev.severity === 'error' ? 'text-red-600' : 'text-gray-700'}>
+          <li key={i} className={ev.severity === 'error' ? 'text-vermilion' : 'text-ink'}>
             t={ev.t} {ev.label}
           </li>
         ))}

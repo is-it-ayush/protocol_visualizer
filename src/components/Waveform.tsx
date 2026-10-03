@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import type { Lane, Timeline, Transition } from '../core/types'
-import { fieldColor } from '../protocols/fields'
+import { fieldColor, WAVE_COLORS } from '../protocols/fields'
 
 const MARGIN = 40
 const LANE_H = 50
 const PAD = 8
-const CANVAS = '#1e1b4b'
 
 export type Viewport = { start: number; end: number }
 
@@ -118,7 +117,7 @@ export function Waveform({ timeline, playhead, pxPerBit = 40, selectedName, onVi
         ref={svgRef}
         width={width}
         height={height}
-        style={{ touchAction: 'pan-y', background: CANVAS }}
+        style={{ touchAction: 'pan-y', background: WAVE_COLORS.canvas }}
       >
         {timeline.lanes.map((lane, i) => {
           const top = i * LANE_H
@@ -126,13 +125,20 @@ export function Waveform({ timeline, playhead, pxPerBit = 40, selectedName, onVi
           const { d, zeroY } = stepPath(lane, trs, x, timeline.duration, top)
           return (
             <g key={lane.id} data-testid={`lane-${lane.id}`}>
-              <text x={4} y={top + LANE_H / 2} fontSize={11} fill="#c7d2fe">
+              <text x={4} y={top + LANE_H / 2} fontSize={11} fill={WAVE_COLORS.label}>
                 {lane.label}
               </text>
               {zeroY !== null && (
-                <line x1={MARGIN} x2={width - MARGIN} y1={zeroY} y2={zeroY} stroke="#6366f1" strokeDasharray="3 3" />
+                <line
+                  x1={MARGIN}
+                  x2={width - MARGIN}
+                  y1={zeroY}
+                  y2={zeroY}
+                  stroke={WAVE_COLORS.zeroLine}
+                  strokeDasharray="3 3"
+                />
               )}
-              <path d={d} fill="none" stroke="#e0e7ff" strokeWidth={2} />
+              <path d={d} fill="none" stroke={WAVE_COLORS.trace} strokeWidth={2} />
             </g>
           )
         })}
@@ -157,7 +163,7 @@ export function Waveform({ timeline, playhead, pxPerBit = 40, selectedName, onVi
                 strokeOpacity={isSelected ? 1 : 0.7}
                 strokeWidth={isSelected ? 3 : 1}
               />
-              <text x={x(f.start) + 3} y={top + 12} fontSize={10} fill="#eef2ff">
+              <text x={x(f.start) + 3} y={top + 12} fontSize={10} fill={WAVE_COLORS.fieldLabel}>
                 {label}
               </text>
             </g>
@@ -167,8 +173,16 @@ export function Waveform({ timeline, playhead, pxPerBit = 40, selectedName, onVi
           .filter((ev) => ev.severity === 'error')
           .map((ev, i) => (
             <g key={i} data-testid="error-marker">
-              <line x1={x(ev.t)} x2={x(ev.t)} y1={0} y2={height} stroke="#dc2626" strokeWidth={2} strokeDasharray="4 2" />
-              <circle cx={x(ev.t)} cy={6} r={4} fill="#dc2626" />
+              <line
+                x1={x(ev.t)}
+                x2={x(ev.t)}
+                y1={0}
+                y2={height}
+                stroke={WAVE_COLORS.error}
+                strokeWidth={2}
+                strokeDasharray="4 2"
+              />
+              <circle cx={x(ev.t)} cy={6} r={4} fill={WAVE_COLORS.error} />
               <title>{ev.label}</title>
             </g>
           ))}
@@ -178,7 +192,7 @@ export function Waveform({ timeline, playhead, pxPerBit = 40, selectedName, onVi
           x2={x(playhead)}
           y1={0}
           y2={height}
-          stroke="#f59e0b"
+          stroke={WAVE_COLORS.playhead}
           strokeWidth={2}
         />
       </svg>

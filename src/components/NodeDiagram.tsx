@@ -1,5 +1,5 @@
 export function NodeDiagram({ from, nodes }: { from: 'A' | 'B'; nodes: [string, string] }) {
-  const active = (side: 'A' | 'B') => (from === side ? 'border-blue-500 bg-blue-50' : 'border-gray-300')
+  const active = (side: 'A' | 'B') => (from === side ? 'border-peacock bg-peacock-tint' : 'border-ink-soft')
   // the line is drawn in the direction of travel, so decreasing dashoffset always moves dashes forward
   const x1 = from === 'A' ? 110 : 190
   const x2 = from === 'A' ? 190 : 110
@@ -9,7 +9,7 @@ export function NodeDiagram({ from, nodes }: { from: 'A' | 'B'; nodes: [string, 
       <svg width={80} height={24} viewBox="100 0 100 24" aria-label={`${from === 'A' ? nodes[0] : nodes[1]} transmitting`}>
         <defs>
           <marker id="node-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-            <path d="M0,0L8,4L0,8z" fill="#2563eb" />
+            <path d="M0,0L8,4L0,8z" className="fill-peacock" />
           </marker>
         </defs>
         <line
@@ -17,7 +17,7 @@ export function NodeDiagram({ from, nodes }: { from: 'A' | 'B'; nodes: [string, 
           x2={x2}
           y1={12}
           y2={12}
-          stroke="#2563eb"
+          className="stroke-peacock"
           strokeWidth={2}
           strokeDasharray="6 4"
           markerEnd="url(#node-arrow)"

@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const root = new URL('../src', import.meta.url).pathname
+const root = join(fileURLToPath(import.meta.url), '..', '..', 'src')
 function walk(d: string): string[] {
   return readdirSync(d).flatMap((n) => {
     const p = join(d, n)

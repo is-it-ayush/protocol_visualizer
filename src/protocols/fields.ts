@@ -104,3 +104,14 @@ export const FIELD_COLORS: Record<string, string> = {
 export function fieldColor(name: string): string {
   return FIELD_COLORS[name] ?? '#868e96'
 }
+
+// Waveform canvas palette: a dark indigo scope with light traces.
+export const WAVE_COLORS = {
+  canvas: '#1e1b4b',
+  label: '#c7d2fe',
+  zeroLine: '#6366f1',
+  trace: '#e0e7ff',
+  fieldLabel: '#eef2ff',
+  error: '#dc2626',
+  playhead: '#f59e0b',
+}
