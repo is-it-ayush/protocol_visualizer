@@ -6,6 +6,7 @@ import { ConfigPanel } from './ConfigPanel'
 import { PlaybackControls } from './PlaybackControls'
 import { FieldInspector } from './FieldInspector'
 import { Waveform } from './Waveform'
+import type { Viewport } from './Waveform'
 import { Minimap } from './Minimap'
 import { NodeDiagram } from './NodeDiagram'
 
@@ -26,6 +27,7 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
   const [error, setError] = useState<string | null>(null)
   const [faults, setFaults] = useState<string[]>([])
   const [selected, setSelected] = useState<FieldSpan | null>(null)
+  const [viewport, setViewport] = useState<Viewport | undefined>()
 
   const timeline = useMemo(
     () => protocol.encode(config, bytes, faults),
@@ -125,10 +127,13 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
         </div>
       </section>
       <section className="order-1 flex min-w-0 flex-col gap-2 md:order-none">
-        <div className="max-w-full overflow-x-auto">
-          <Waveform timeline={timeline} playhead={pb.t} />
-        </div>
-        <Minimap onSeek={(t) => dispatch({ type: 'seek', t })} />
+        <Waveform timeline={timeline} playhead={pb.t} onViewport={setViewport} />
+        <Minimap
+          timeline={timeline}
+          playhead={pb.t}
+          viewport={viewport}
+          onSeek={(t) => dispatch({ type: 'seek', t })}
+        />
         <div className="flex flex-wrap gap-1">
           {timeline.fieldSpans.map((s, i) => (
             <button
