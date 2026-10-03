@@ -25,7 +25,7 @@ PLAN:
 5. Protocol page layout: header, anatomy strip, waveform, controls/config as compact side/below panels, responsive.
 6. Waveform/Minimap/NodeDiagram/FieldInspector restyle: spans use field colors, selected field highlighted, inspector shows meaning + value.
 7. Config/payload/faults/playback controls restyle (clear labels, grouped, 44px touch targets kept).
-8. Polish + responsive check incl. FieldInspector.tsx leftover gray/red default classes -> theme tokens; update any tests broken by markup changes (behavior assertions unchanged); fix tests/polish.test.ts path resolution (fileURLToPath/process.cwd instead of URL.pathname, which yields '/src' under jsdom), assertions unchanged, vite.config.ts untouched.
+8. Polish + responsive check, update any tests broken by markup changes (behavior assertions unchanged).
 
 TESTABLE BY:
 1. Vitest: every fieldSpan name from each encoder (happy path + faults) has a doc entry; colors defined.

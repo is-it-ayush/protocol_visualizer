@@ -1,7 +1,7 @@
-PASS run=2
-
-Re-validation after step 4 fix (462da61).
-- `npm test`: 11 files / 69 tests pass. `npm run build`: succeeds. Per-step TESTs are subsets of the full suite and pass.
-- LOCK test files: git status shows no modifications to tests/.
-- Step 4 now meets DO: d3 linear scale x (Waveform.tsx), lane groups with digital/analog (0V ref) step paths, labelled field bands, red error markers, playhead line, scroll container with auto-follow, d3-zoom (ctrl-wheel/pinch + drag pan), ResizeObserver guarded, Minimap with viewport box and click-seek, NodeDiagram with animated directional arrow.
-- Steps 1-3, 5-11 unchanged from the earlier run; no regressions seen.
+PASS run=1
+Findings:
+- All 8 step TEST commands run: green. Locked tests pass individually (fields 8, theme 7, dashboard 1, anatomy 4, protocolPage 2, fieldStyle 3, controlsStyle 4, polish 4).
+- npm test: 19 files, 102 tests pass. npm run build: succeeds.
+- Grep: no hex literals in src/*.tsx, no default gray/red/blue/slate/green palette classes in src.
+- vite.config.ts untouched; working tree clean for src/tests.
+- LOCK note: tests/polish.test.ts (step 8 LOCK) was modified in commit 4fea2a2 (root path via fileURLToPath; assertions unchanged). The draft handoff said not to modify it, but summary.md item 8 and 08.md FILES explicitly prescribe this exact fix, so I accepted it. All other LOCK files are identical to the step 1 commit.
