@@ -1,0 +1,7 @@
+.agent/state.json
+.agent/attempts/
+.agent/checkpoint.md
+.agent/run.log
+node_modules/
+dist/
+git/
