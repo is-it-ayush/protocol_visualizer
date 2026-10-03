@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import type { Lane, Timeline, Transition } from '../core/types'
+import { fieldColor } from '../protocols/fields'
 
 const MARGIN = 40
 const LANE_H = 50
 const PAD = 8
+const CANVAS = '#1e1b4b'
 
 export type Viewport = { start: number; end: number }
 
@@ -12,6 +14,7 @@ type Props = {
   timeline: Timeline
   playhead: number
   pxPerBit?: number
+  selectedName?: string | null
   onViewport?: (v: Viewport) => void
 }
 
@@ -43,7 +46,7 @@ function stepPath(
   return { d, zeroY: lane.kind === 'analog' ? y(0) : null }
 }
 
-export function Waveform({ timeline, playhead, pxPerBit = 40, onViewport }: Props) {
+export function Waveform({ timeline, playhead, pxPerBit = 40, selectedName, onViewport }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const [k, setK] = useState(1)
@@ -110,40 +113,51 @@ export function Waveform({ timeline, playhead, pxPerBit = 40, onViewport }: Prop
   }, [])
 
   return (
-    <div ref={wrapRef} className="max-w-full overflow-x-auto" onScroll={report}>
-      <svg ref={svgRef} width={width} height={height} style={{ touchAction: 'pan-y' }}>
+    <div ref={wrapRef} className="max-w-full overflow-x-auto rounded-lg" onScroll={report}>
+      <svg
+        ref={svgRef}
+        width={width}
+        height={height}
+        style={{ touchAction: 'pan-y', background: CANVAS }}
+      >
         {timeline.lanes.map((lane, i) => {
           const top = i * LANE_H
           const trs = timeline.transitions.filter((tr) => tr.lane === lane.id).sort((a, b) => a.t - b.t)
           const { d, zeroY } = stepPath(lane, trs, x, timeline.duration, top)
           return (
             <g key={lane.id} data-testid={`lane-${lane.id}`}>
-              <text x={4} y={top + LANE_H / 2} fontSize={11} fill="#374151">
+              <text x={4} y={top + LANE_H / 2} fontSize={11} fill="#c7d2fe">
                 {lane.label}
               </text>
               {zeroY !== null && (
-                <line x1={MARGIN} x2={width - MARGIN} y1={zeroY} y2={zeroY} stroke="#9ca3af" strokeDasharray="3 3" />
+                <line x1={MARGIN} x2={width - MARGIN} y1={zeroY} y2={zeroY} stroke="#6366f1" strokeDasharray="3 3" />
               )}
-              <path d={d} fill="none" stroke="#2563eb" strokeWidth={2} />
+              <path d={d} fill="none" stroke="#e0e7ff" strokeWidth={2} />
             </g>
           )
         })}
         {timeline.fieldSpans.map((f, i) => {
           const top = laneIndex(f.lane) * LANE_H
           const label = f.value !== undefined ? `${f.name} ${f.value}` : f.name
+          const color = fieldColor(f.name)
+          const isSelected = selectedName != null && f.name === selectedName
           return (
             <g key={i}>
               <rect
+                data-field={f.name}
+                data-color={color}
+                data-selected={isSelected ? 'true' : undefined}
                 x={x(f.start)}
                 y={top + 2}
                 width={Math.max(0, x(f.end) - x(f.start))}
                 height={LANE_H - 4}
-                fill={f.from === 'A' ? '#3b82f6' : '#10b981'}
-                fillOpacity={0.15}
-                stroke={f.from === 'A' ? '#3b82f6' : '#10b981'}
-                strokeOpacity={0.5}
+                fill={color}
+                fillOpacity={isSelected ? 0.35 : 0.22}
+                stroke={color}
+                strokeOpacity={isSelected ? 1 : 0.7}
+                strokeWidth={isSelected ? 3 : 1}
               />
-              <text x={x(f.start) + 3} y={top + 12} fontSize={10} fill="#111827">
+              <text x={x(f.start) + 3} y={top + 12} fontSize={10} fill="#eef2ff">
                 {label}
               </text>
             </g>

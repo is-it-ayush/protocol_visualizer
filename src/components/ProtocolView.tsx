@@ -99,7 +99,12 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
         />
       </section>
       <section className="flex min-w-0 flex-col gap-2">
-        <Waveform timeline={timeline} playhead={pb.t} onViewport={setViewport} />
+        <Waveform
+          timeline={timeline}
+          playhead={pb.t}
+          selectedName={anatomyName ?? shown?.name ?? null}
+          onViewport={setViewport}
+        />
         <Minimap
           timeline={timeline}
           playhead={pb.t}
@@ -176,7 +181,7 @@ export function ProtocolView({ protocol }: { protocol: Protocol }) {
       </section>
       <section>
         <h2 className="mb-2 text-lg font-medium text-ink">Field inspector</h2>
-        <FieldInspector span={shown} events={timeline.events} />
+        <FieldInspector protocolId={protocol.id} span={shown} events={timeline.events} />
       </section>
     </div>
   )
